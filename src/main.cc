@@ -7,6 +7,8 @@
 #include <GL/glfw.h>
 
 #include <iostream>
+#include <math3d.h>
+
 
 int main () {
 		
@@ -31,6 +33,8 @@ int main () {
 	while(true) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// чистим буфер цвета и глубины	
+		
+		
 	}
 	
 }
