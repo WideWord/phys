@@ -30,6 +30,27 @@ int main () {
 	glClearDepth(1); // этим значением будем заливать буфер глубины
 	
 	
+	mat4 perspective = mat4.perspective(60, 800/600, 0.1f, 100.0f);
+	// создаём перспективную матрицу с помощью math3d.h
+	
+	vec2 speed = vec2(sx, sy);
+	// переводим скорость в вектор из math3d
+	
+	vec2 pos = vec2(0, 0); // позиция шарика 0, 0
+	
+	// теперь создаём модель шарика
+	// заливаем модель сразу на видеокарту, как в современных играх
+	unsigned vao; // vertex array object
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao); // vao - идинтефикатор модели шарика в памяти видеокарты
+	unsigned vbo[3]; // vertex buffer object
+	// vbo - три идинтефикатора массива координат: позиция, нормаль (для освещения) каждой точки и индексы
+	glGenBuffers(3, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER,  * sizeof(unsigned) * 3, index, GL_STATIC_DRAW);
+
+
+	
 	while(true) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// чистим буфер цвета и глубины	
