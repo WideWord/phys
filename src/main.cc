@@ -10,6 +10,70 @@
 #include <math3d.h>
 
 
+#include <vector>
+
+
+
+
+
+void loadModel (unsigned& vertsNum, unsigned& indNum, unsigned*& indicies, float*& pos, float*& normals) {
+	
+	// делаем куб для начала
+	
+	// создаём точки куба (81 точка на каждую грань)
+	vertsNum = 81 * 6; // 6 граней
+	
+	for (int i = 0; i < 6; ++i) {// для шести граней куба		
+		for (int x = 0; x < 9; ++k) {// для девяти точек куба
+			for (int y = 0; y < 9; ++y) {
+				int id = (i * 81 + x * 9 + y) * 3; // индекс текущей точки в массиве позиций
+				int indid = (i * 64 + x * 8 + y) * 3 * 2; // индекс в массиве индексов
+				switch(i) {
+					case 0:
+						pos[id] = 1;
+						pos[id + 1] = (float)x - 4.5f;
+						pos[id + 2] = (float)y - 4.5f;
+						break;
+					case 1:
+						pos[id] = -1;
+						pos[id + 1] = (float)x - 4.5f;
+						pos[id + 2] = (float)y - 4.5f;
+						break;
+					case 2:
+						pos[id] = (float)x - 4.5f;
+						pos[id + 1] = 1;
+						pos[id + 2] = (float)y - 4.5f;
+						break;
+					case 3:
+						pos[id] = (float)x - 4.5f;
+						pos[id + 1] = -1;
+						pos[id + 2] = (float)y - 4.5f;
+						break;
+					case 4:
+						pos[id] = (float)x - 4.5f;
+						pos[id + 1] = (float)y - 4.5f;
+						pos[id + 2] = 1;
+						break;
+					case 5:
+						pos[id] = (float)x - 4.5f;
+						pos[id + 1] = (float)y - 4.5f;
+						pos[id + 2] = 1;
+						break;
+				}
+				// делаем треугольники из точек
+				if (x < 9 && y < 9) {// последний ряд не заполняем
+					indicies[indid] = id;
+					indicies[intid + 1] = id + 1;
+					indicies[indid + 2] = id + 1 + 9;
+					indicies[indid + 3] = id;
+					indicies[indid + 4] = id + 1 + 9;
+					indicies[indid + 5] = id + 9;
+				}
+			}
+		}
+	}
+}
+
 int main () {
 		
 	float sx, sy; // скорость x, y
