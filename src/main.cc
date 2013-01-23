@@ -114,10 +114,10 @@ int main () {
 	float sx, sy; // скорость x, y
 	float m; // масса
 	
-	std::cout << "Speed: ";
-	std::cin >> sx >> sy; // читаем скорость с консоли
-	std::cout << "M: ";
-	std::cin >> m; // читаем массу
+	//std::cout << "Speed: ";
+	//std::cin >> sx >> sy; // читаем скорость с консоли
+	//std::cout << "M: ";
+	//std::cin >> m; // читаем массу
 	
 	glfwInit();
 	glfwOpenWindow(800, 600,  // размер окна
@@ -174,7 +174,20 @@ int main () {
 	unsigned fshader = glCreateShader(GL_FRAGMENT_SHADER);
 
 	// этот код будет выполняться на видеокарте
-	auto vshaderSource = "";
+	auto vshaderSource = "#version 330 core\n\
+	uniform mat4 perspective;\n\
+	uniform mat4 model;\n\
+	uniform mat4 view;\n\
+	in vec3 position;\n\
+	in vec3 normal;\n\
+	out vec3 f_position;\n\
+	out vec3 f_normal;\n\
+	void main (void) {\n\
+		vec4 vertex = model * vec4(position, 1);\n\
+		f_position = vec3(vertex);\n\
+		f_normal = mat3(model) * normal;\n\
+		gl_Position = (view * perspective) * vertex;\n\
+	}";
 
 	int len = strlen(vshaderSource);
 	int _len;
@@ -193,7 +206,14 @@ int main () {
 
 	//дубль 2
 	
-	auto fshaderSource = "";
+	auto fshaderSource = "#version 330 core\n\
+	out vec4 o_color;\n\
+	uniform vec3 color;\n\
+	in vec3 f_position;\n\
+	in vec3 f_normal;\n\
+	void main (void) {\n\
+		o_color = vec4(color,1);\n\
+	}";
 	
 	len = strlen(fshaderSource);
 	glShaderSource(fshader, 1, (const GLchar**)&fshaderSource, (const GLint*)&len);
@@ -237,10 +257,12 @@ int main () {
     
 	
 
-	
+	glUseProgram(shader);// используем созданный шейдер
 	while(true) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// чистим буфер цвета и глубины	
+		
+		
 		
 		
 	}
