@@ -1,6 +1,66 @@
 #include "memory.h"
 #include <cmath>
 
+
+class vec3
+{
+public:
+    inline vec3(float x = 0, float y = 0, float z = 0) : x(x), y(y), z(z) {}
+    float x, y, z;
+
+    inline vec3 operator+(const vec3& other) {
+        return vec3(x + other.x, y + other.y, z + other.z);
+    }
+
+    inline vec3 operator-(const vec3& other) {
+        return vec3(x - other.x, y - other.y, z - other.z);
+    }
+
+    inline vec3 operator*(float other) {
+        return vec3(x * other, y * other, z * other);
+    }
+
+    inline vec3 operator/(float other) {
+        return vec3(x / other, y / other, z / other);
+    }
+
+    inline void operator+=(vec3 other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+    }
+
+    inline void operator-=(vec3 other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+    }
+
+    inline void operator*=(float other) {
+        x *= other;
+        y *= other;
+        z *= other;
+    }
+
+    inline void operator/=(float other) {
+        x /= other;
+        y /= other;
+        z /= other;
+    }
+
+    inline float operator*(vec3 other) {
+        return x * other.x + y * other.y + z * other.z;
+    }
+
+    inline vec3 cross(vec3 b) {
+        return vec3(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
+    }
+    
+    inline vec3 operator-() {
+		return vec3(-x, -y, -z);
+	}
+};
+
 class mat4 {
 private:
     float* mtx;
@@ -17,6 +77,15 @@ public:
 		M[ 8] = 0; M[ 9] = 0; M[10] = A; M[11] = B;
 		M[12] = 0; M[13] = 0; M[14] = -1; M[15] = 0;
 		return std::move(M);
+	}
+	
+	static inline mat4 translation(vec3 vec) {
+		mat4 mtx;
+		mtx[ 0] = 1; mtx[ 1] = 0; mtx[ 2] = 0; mtx[ 3] = vec.x;
+        mtx[ 4] = 0; mtx[ 5] = 1; mtx[ 6] = 0; mtx[ 7] = vec.y;
+        mtx[ 8] = 0; mtx[ 9] = 0; mtx[10] = 1; mtx[11] = vec.z;
+        mtx[12] = 0; mtx[13] = 0; mtx[14] = 0; mtx[15] = 1;
+		return mtx;
 	}
 
     inline mat4()
@@ -98,61 +167,10 @@ public:
 
         delete A;
     }
-};
-
-class vec3
-{
-public:
-    inline vec3(float x = 0, float y = 0, float z = 0) : x(x), y(y), z(z) {}
-    float x, y, z;
-
-    inline vec3 operator+(const vec3& other) {
-        return vec3(x + other.x, y + other.y, z + other.z);
-    }
-
-    inline vec3 operator-(const vec3& other) {
-        return vec3(x - other.x, y - other.y, z - other.z);
-    }
-
-    inline vec3 operator*(float other) {
-        return vec3(x * other, y * other, z * other);
-    }
-
-    inline vec3 operator/(float other) {
-        return vec3(x / other, y / other, z / other);
-    }
-
-    inline void operator+=(vec3 other) {
-        x += other.x;
-        y += other.y;
-        z += other.z;
-    }
-
-    inline void operator-=(vec3 other) {
-        x -= other.x;
-        y -= other.y;
-        z -= other.z;
-    }
-
-    inline void operator*=(float other) {
-        x *= other;
-        y *= other;
-        z *= other;
-    }
-
-    inline void operator/=(float other) {
-        x /= other;
-        y /= other;
-        z /= other;
-    }
-
-    inline float operator*(vec3 other) {
-        return x * other.x + y * other.y + z * other.z;
-    }
-
-    inline vec3 cross(vec3 b) {
-        return vec3(y * b.z - z * b.y, z * b.x - x * b.z, x * b.y - y * b.x);
-    }
+    
+    inline float* operator*() {
+		return mtx;
+	}
 };
 
 class vec2

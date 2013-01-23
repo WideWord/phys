@@ -134,15 +134,6 @@ int main () {
     glEnable(GL_CULL_FACE); // отсечение (я не помню что это)
     glCullFace(GL_BACK);  // рисование только одной стороны
 	
-	
-	mat4 perspective = mat4::perspective(60, 800/600, 0.1f, 100.0f);
-	// создаём перспективную матрицу с помощью math3d.h
-	
-	vec2 speed = vec2(sx, sy);
-	// переводим скорость в вектор из math3d
-	
-	vec2 position = vec2(0, 0); // позиция шарика 0, 0
-	
 	// теперь создаём модель шарика
 	// заливаем модель сразу на видеокарту, как в современных играх
 	unsigned vao; // vertex array object
@@ -254,7 +245,15 @@ int main () {
     }
     // шейдер готов
     
-    
+	mat4 perspective = mat4::perspective(60, 800/600, 0.1f, 100.0f);
+	// создаём перспективную матрицу с помощью math3d.h
+	
+	vec2 speed = vec2(sx, sy);
+	// переводим скорость в вектор из math3d
+	
+	vec2 position = vec2(0, 0); // позиция куба 0, 0
+    mat4 model, view;
+	vec3 camPosition = vec3(0, 0, -10);// позиция камеры
 	
 
 	glUseProgram(shader);// используем созданный шейдер
@@ -262,9 +261,36 @@ int main () {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// чистим буфер цвета и глубины	
 		
+		//переводим координаты кубика в матрицу
+		mat4 model = mat4::translation(vec3(position.x, position.y, 0));
+		mat4 view = mat4::translation(-camPosition);
 		
 		
+		//передаём матрицы в шейдер
+		GLint loc;
+		loc = glGetUniformLocation(shader, "perspective");
+		glUniformMatrix4fv(loc, 1, GL_TRUE, *perspective);
+		loc = glGetUniformLocation(shader, "view");
+		glUniformMatrix4fv(loc, 1, GL_TRUE, *view);
+		loc = glGetUniformLocation(shader, "model");
+		glUniformMatrix4fv(loc, 1, GL_TRUE, *model);
 		
+		// передаём загруженные на видеокарту вершины куба в шейдер
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+		loc = glGetAttribLocation(shader, "position");
+		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+		glEnableVertexAttribArray(loc);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		loc = glGetAttribLocation(shader, "normal");
+		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+		glEnableVertexAttribArray(loc);
+		
+		// рисуем куб
+		glDrawElements(GL_TRIANGLES, facesNum * 3, GL_UNSIGNED_INT, NULL);
+		
+		glfwSwapBuffers();
 	}
 	
 }
