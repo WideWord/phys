@@ -1,13 +1,16 @@
 
+
+
 #include <GL/glew.h>
 #ifdef PHYS_LINUX
 #include <GL/glxew.h>
 #else
 #include <GL/wglew.h>
+#endif
 #include <GL/glfw.h>
 
 #include <iostream>
-#include <math3d.h>
+#include "math3d.h"
 
 
 #include <vector>
@@ -118,7 +121,7 @@ int main () {
 	
 	glfwInit();
 	glfwOpenWindow(800, 600,  // размер окна
-		8, 8, 8, 8, 8, 1 //каналы
+		8, 8, 8, 8, 8, 1, //каналы
 		GLFW_WINDOW);
 	glewInit();
 	glClearColor(0, 0, 0, 1); // устанавливаем цвет, которым будем очищать экран (буфер цвета)
@@ -132,13 +135,13 @@ int main () {
     glCullFace(GL_BACK);  // рисование только одной стороны
 	
 	
-	mat4 perspective = mat4.perspective(60, 800/600, 0.1f, 100.0f);
+	mat4 perspective = mat4::perspective(60, 800/600, 0.1f, 100.0f);
 	// создаём перспективную матрицу с помощью math3d.h
 	
 	vec2 speed = vec2(sx, sy);
 	// переводим скорость в вектор из math3d
 	
-	vec2 pos = vec2(0, 0); // позиция шарика 0, 0
+	vec2 position = vec2(0, 0); // позиция шарика 0, 0
 	
 	// теперь создаём модель шарика
 	// заливаем модель сразу на видеокарту, как в современных играх
@@ -173,7 +176,8 @@ int main () {
 	// этот код будет выполняться на видеокарте
 	auto vshaderSource = "";
 
-	len = strlen(vshaderSource);
+	int len = strlen(vshaderSource);
+	int _len;
 	glShaderSource(vshader, 1, (const GLchar**)&vshaderSource, (const GLint*)&len);//загружаем код на видеокарту
 	glCompileShader(vshader);// компилируем
 
