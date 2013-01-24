@@ -292,6 +292,8 @@ int main () {
 		// рисуем куб
 		glDrawElements(GL_TRIANGLES, facesNum * 3, GL_UNSIGNED_INT, NULL);
 		
+		
+		//обновляем окно
 		glfwSwapBuffers();
 		
 		

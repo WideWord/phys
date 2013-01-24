@@ -61,6 +61,43 @@ public:
 	}
 };
 
+class quat {
+public:
+    vec3 v;
+    float w;
+    float& x;
+    float& y;
+    float& z;
+
+    inline quat(float x = 0, float y = 0, float z = 0, float w = 1)
+        : v(x, y, z), w(w), x(v.x), y(v.y), z(v.z) {}
+
+    inline quat(const vec3& cv, float w = 1) : v(cv), w(w), x(v.x), y(v.y), z(v.z) {}
+
+    inline quat operator*(quat other)
+    {
+        return quat(v.cross(other.v) + v * other.w + other.v * w, w * other.w - v * other.v);
+    }
+
+    inline void operator*= (quat other)
+    {
+        vec3 vx(v);
+        v = vx.cross(other.v) + vx * other.w + other.v * w;
+        w = w * other.w - vx * other.v;
+
+    }
+    
+    inline quat normalize () {
+		float t = sqrt(x*x+y*y+z*z+w*w);
+		return quat(x / t, y / t, z / t , w / t );
+	}
+	
+	
+
+
+};
+
+
 class mat4 {
 private:
     float* mtx;
@@ -85,6 +122,26 @@ public:
         mtx[ 4] = 0; mtx[ 5] = 1; mtx[ 6] = 0; mtx[ 7] = vec.y;
         mtx[ 8] = 0; mtx[ 9] = 0; mtx[10] = 1; mtx[11] = vec.z;
         mtx[12] = 0; mtx[13] = 0; mtx[14] = 0; mtx[15] = 1;
+		return mtx;
+	}
+	
+	static inline mat4 rotation(quat q) {
+		q.normalize();
+		mat4 mtx;
+		mtx[0] = q.w;	mtx[1] = q.z;	mtx[2] = -q.y;	mtx[3] = q.x;
+		mtx[4] = -q.z;	mtx[5] = q.w;	mtx[6] = q.x;	mtx[7] = q.y;
+		mtx[8] = q.y;	mtx[9]=-q.x;	mtx[10]=q.w; mtx[11]=q.z;
+		mtx[12]=-q.x;	mtx[13]=-q.y;	mtx[14]=-q.z;	mtx[15]=q.w;
+
+		mat4 m;
+
+
+		m[0] = q.w;	m[1] = q.z;	m[2] = -q.y;	m[3] = q.x;
+		m[4] = -q.z;	m[5] = q.w;	m[6] = q.x;	m[7] = -q.y;
+		m[8] = q.y;	m[9]=-q.x;	m[10]=q.w; m[11]=-q.z;
+		m[12]=q.x;	m[13]=q.y;	m[14]=q.z;	m[15]=q.w;
+
+		mtx *= m;
 		return mtx;
 	}
 
@@ -220,34 +277,6 @@ public:
     }
 };
 
-class quat {
-public:
-    vec3 v;
-    float w;
-    float& x;
-    float& y;
-    float& z;
-
-    inline quat(float x = 0, float y = 0, float z = 0, float w = 1)
-        : v(x, y, z), w(w), x(v.x), y(v.y), z(v.z) {}
-
-    inline quat(const vec3& cv, float w = 1) : v(cv), w(w), x(v.x), y(v.y), z(v.z) {}
-
-    inline quat operator*(quat other)
-    {
-        return quat(v.cross(other.v) + v * other.w + other.v * w, w * other.w - v * other.v);
-    }
-
-    inline void operator*= (quat other)
-    {
-        vec3 vx(v);
-        v = vx.cross(other.v) + vx * other.w + other.v * w;
-        w = w * other.w - vx * other.v;
-
-    }
-
-
-};
 
 
 
