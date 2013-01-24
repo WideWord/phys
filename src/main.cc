@@ -124,7 +124,7 @@ int main () {
 		8, 8, 8, 8, 8, 1, //каналы
 		GLFW_WINDOW);
 	glewInit();
-	glClearColor(0, 0, 0, 1); // устанавливаем цвет, которым будем очищать экран (буфер цвета)
+	glClearColor(1, 0, 0, 1); // устанавливаем цвет, которым будем очищать экран (буфер цвета)
 	// очистка - просто заливка этим цветом
 	glClearDepth(1); // этим значением будем заливать буфер глубины
 	glViewport(0,0,800, 600); // передаём в opengl размеры окна
@@ -132,7 +132,7 @@ int main () {
     glEnable( GL_DEPTH_TEST ); // включаем тест глубины (для него и нужен буфер глубины)
     glDepthFunc( GL_LEQUAL ); // решим теста глубины
     glEnable(GL_CULL_FACE); // отсечение (я не помню что это)
-    glCullFace(GL_BACK);  // рисование только одной стороны
+    glCullFace(GL_FRONT);  // рисование только одной стороны
 	
 	// теперь создаём модель шарика
 	// заливаем модель сразу на видеокарту, как в современных играх
@@ -177,13 +177,13 @@ int main () {
 		vec4 vertex = model * vec4(position, 1);\n\
 		f_position = vec3(vertex);\n\
 		f_normal = mat3(model) * normal;\n\
-		gl_Position = (view * perspective) * vertex;\n\
+		gl_Position = (perspective * view) * vertex;\n\
 	}";
 
 	int len = strlen(vshaderSource);
 	int _len;
 	glShaderSource(vshader, 1, (const GLchar**)&vshaderSource, (const GLint*)&len);//загружаем код на видеокарту
-	glCompileShader(vshader);// компилируем
+	glCompileShader(vshader);// комcolorпилируем
 
 	//проверяем скомпилировался ли
 	GLint status;
@@ -203,7 +203,7 @@ int main () {
 	in vec3 f_position;\n\
 	in vec3 f_normal;\n\
 	void main (void) {\n\
-		o_color = vec4(color,1);\n\
+		o_color = vec4(f_position,1);\n\
 	}";
 	
 	len = strlen(fshaderSource);
@@ -245,7 +245,7 @@ int main () {
     }
     // шейдер готов
     
-	mat4 perspective = mat4::perspective(60, 800/600, 0.1f, 100.0f);
+	mat4 perspective = mat4::perspective(60, 800.0f/600.0f, 0.1f, 100.0f);
 	// создаём перспективную матрицу с помощью math3d.h
 	
 	vec2 speed = vec2(sx, sy);
@@ -253,7 +253,7 @@ int main () {
 	
 	vec2 position = vec2(0, 0); // позиция куба 0, 0
     mat4 model, view;
-	vec3 camPosition = vec3(0, 0, -10);// позиция камеры
+	vec3 camPosition = vec3(0, 0, 10);// позиция камеры
 	
 
 	glUseProgram(shader);// используем созданный шейдер
@@ -274,6 +274,8 @@ int main () {
 		glUniformMatrix4fv(loc, 1, GL_TRUE, *view);
 		loc = glGetUniformLocation(shader, "model");
 		glUniformMatrix4fv(loc, 1, GL_TRUE, *model);
+		loc = glGetUniformLocation(shader, "color");
+		glUniform3f(loc, 1, 1, 1);
 		
 		// передаём загруженные на видеокарту вершины куба в шейдер
 		glBindVertexArray(vao);
@@ -291,6 +293,8 @@ int main () {
 		glDrawElements(GL_TRIANGLES, facesNum * 3, GL_UNSIGNED_INT, NULL);
 		
 		glfwSwapBuffers();
+		
+		
 	}
 	
 }
