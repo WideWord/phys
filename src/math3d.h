@@ -94,7 +94,22 @@ public:
 	
 	
 
-
+	static inline quat euler(vec3 v) {
+		float c1 = cosf(v.x);
+		float s1 = sinf(v.x);
+		float c2 = cosf(v.y);
+		float s2 = sinf(v.y);
+		float c3 = cosf(v.z);
+		float s3 = sinf(v.z);
+		quat res;
+		float w = sqrt(1.0 + c1 * c2 + c1*c3 - s1 * s2 * s3 + c2*c3) / 2.0;
+		float w4 = (4.0 * w);
+		res.x = (c2 * s3 + c1 * s3 + s1 * s2 * c3) / w4 ;
+		res.y = (s1 * c2 + s1 * c3 + c1 * s2 * s3) / w4 ;
+		res.z = (-s1 * s3 + c1 * s2 * c3 +s2) / w4 ;
+		res.w = w;
+		return res;		
+	}
 };
 
 

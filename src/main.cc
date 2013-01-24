@@ -252,8 +252,9 @@ int main () {
 	// переводим скорость в вектор из math3d
 	
 	vec2 position = vec2(0, 0); // позиция куба 0, 0
+	float rotation = 0; // поворо куба вокруг оси z
     mat4 model, view;
-	vec3 camPosition = vec3(0, 0, 10);// позиция камеры
+	vec3 camPosition = vec3(0, 2, 10);// позиция камеры
 	
 
 	glUseProgram(shader);// используем созданный шейдер
@@ -263,6 +264,7 @@ int main () {
 		
 		//переводим координаты кубика в матрицу
 		mat4 model = mat4::translation(vec3(position.x, position.y, 0));
+		model *= mat4::rotation(quat::euler(vec3(0, rotation, 0)));
 		mat4 view = mat4::translation(-camPosition);
 		
 		
@@ -295,6 +297,8 @@ int main () {
 		
 		//обновляем окно
 		glfwSwapBuffers();
+		
+		rotation += 0.005f;
 		
 		
 	}
